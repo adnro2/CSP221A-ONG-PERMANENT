@@ -8,8 +8,8 @@ class InsufficientBatteryError(Exception):
         message = f"Robot '{robot_name}' has insufficient battery. Available: {available_battery}%, Required: {required_battery}%."
         super().__init__(message)
         self.robot_name = robot_name
-        self._battery = available_battery
-        self.requiredBattery = required_battery
+        self.available_battery = available_battery
+        self.required_battery = required_battery
 
 class Robot(ABC):
     manufacturer = "Golden Dragon"
@@ -22,7 +22,7 @@ class Robot(ABC):
 
     @property
     def battery(self):
-        return self._battery
+        return self.available_battery
 
     @battery.setter
     def battery(self, value):
@@ -30,7 +30,7 @@ class Robot(ABC):
             value = 0
         elif value > 100:
             value = 100
-        self._battery = value
+        self.available_battery = value
 
     def use_battery(self, amount):
         if self.battery >= amount:
@@ -61,11 +61,17 @@ class CleaningRobot(Robot):
 
 
 class DroneRobot(Robot):
+
     def __init__(self, name, battery=100, max_altitude=100):
         super().__init__(name, battery)
         self.max_altitude = max_altitude
+        self.current_altitude = 0
 
     def perform_task(self):
         cost = 70
         self.use_battery(cost)
-        return f"{self.name} flew! Reached {self.max_altitude}m."
+        self.current_altitude = min(50, self.max_altitude)
+        return (
+            f"{self.name} flew! reached {self.current_altitude}m "
+            f"(Max: {self.max_altitude}m). Battery remaining: {self.battery}%"
+        )
