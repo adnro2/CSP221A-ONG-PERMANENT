@@ -75,3 +75,10 @@ class DroneRobot(Robot):
             f"{self.name} flew! reached {self.current_altitude}m "
             f"(Max: {self.max_altitude}m). Battery remaining: {self.battery}%"
         )
+
+def fleet_report(robots):
+
+    print("Fleet Status Report")
+    for robot in robots:
+        print(str(robot))
+    print(f"Total Active Fleet Population: {Robot.population}")
