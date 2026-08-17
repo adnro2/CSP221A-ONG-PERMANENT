@@ -1,3 +1,4 @@
+import functools
 import logging
 from abc import ABC, abstractmethod
 
@@ -13,6 +14,16 @@ class InsufficientBatteryError(Exception):
         self.required_battery = required_battery
 
 logging.basicConfig(level=logging.INFO)
+
+def log_action(func):
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.info(f"Starting {func.__name__} execution.")
+        result = func(*args, **kwargs)
+        logging.info(f"Finished {func.__name__} execution.")
+        return result
+    return wrapper
 
 def run_task_safely(robot, **kwargs):
 
@@ -33,6 +44,15 @@ class Robot(ABC):
         self.name = name
         self.battery = battery
         Robot.population += 1
+
+    @classmethod
+    def from_config(cls, config):
+        """Constructs an instance of cls from a dictionary."""
+        name = config["name"]
+        battery = config.get("battery", 100)
+        # Capture any subclass-specific attributes passed in config
+        extra_kwargs = {k: v for k, v in config.items() if k not in ("name", "battery")}
+        return cls(name=name, battery=battery, **extra_kwargs)
 
     @property
     def battery(self):
@@ -68,11 +88,11 @@ class CleaningRobot(Robot):
         super().__init__(name, battery)
         self.dust_capacity = dust_capacity
 
-    def perform_task(self):
+    @log_action
+    def perform_task(self, **kwargs):
         cost = 50
         self.use_battery(cost)
         return f"{self.name} successfully vacuumed the area (Capacity: {self.dust_capacity}L)."
-
 
 class DroneRobot(Robot):
 
