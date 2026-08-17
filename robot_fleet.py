@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 
 
@@ -11,6 +12,19 @@ class InsufficientBatteryError(Exception):
         self.available_battery = available_battery
         self.required_battery = required_battery
 
+logging.basicConfig(level=logging.INFO)
+
+def run_task_safely(robot, **kwargs):
+
+    try:
+        result = robot.perform_task(**kwargs)
+    except InsufficientBatteryError as error:
+        logging.error(f"Task failed: {error}")
+    else:
+        print(result)
+    finally:
+        print(f"Current battery level for {robot.name}: {robot.battery}%")
+        
 class Robot(ABC):
     manufacturer = "Golden Dragon"
     population = 0
