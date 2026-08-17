@@ -151,9 +151,3 @@ def demonstrate_mutable_trap():
     fixed_a.add_entry("Unit Beta online")
     print(f"Fixed A logs: {fixed_a.log_entries}")
     print(f"Fixed B logs: {fixed_b.log_entries}  <- Correct: Fixed B remains empty and isolated.")
-
-# Temporary experimental helper
-def emergency_battery_drain(robots):
-    """Drain all robots to 0% battery immediately (experimental)."""
-    for robot in robots:
-        robot.battery = 0
