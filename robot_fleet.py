@@ -116,3 +116,38 @@ def fleet_report(robots):
     for robot in robots:
         print(str(robot))
     print(f"Total Active Fleet Population: {Robot.population}")
+
+class BrokenFleetTracker:
+
+    log_entries = []  
+
+    def add_entry(self, entry):
+        self.log_entries.append(entry)
+
+
+class CorrectedFleetTracker:
+
+    def __init__(self):
+        self.log_entries = []  
+
+    def add_entry(self, entry):
+        self.log_entries.append(entry)
+
+
+def demonstrate_mutable_trap():
+
+    print("=== Broken Fleet Tracker (Mutable Class Attribute) ===")
+    tracker_a = BrokenFleetTracker()
+    tracker_b = BrokenFleetTracker()
+
+    tracker_a.add_entry("Unit Alpha online")
+    print(f"Tracker A logs: {tracker_a.log_entries}")
+    print(f"Tracker B logs: {tracker_b.log_entries}  <- Bug: Tracker B shares Tracker A's list!")
+
+    print("\n=== Corrected Fleet Tracker (Instance Attribute) ===")
+    fixed_a = CorrectedFleetTracker()
+    fixed_b = CorrectedFleetTracker()
+
+    fixed_a.add_entry("Unit Beta online")
+    print(f"Fixed A logs: {fixed_a.log_entries}")
+    print(f"Fixed B logs: {fixed_b.log_entries}  <- Correct: Fixed B remains empty and isolated.")
